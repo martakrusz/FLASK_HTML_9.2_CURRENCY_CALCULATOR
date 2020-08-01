@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+      {% block head %}
+        <meta charset="utf-8">
+        <title>Kalkulator walut 02</title>
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css') }}"> 
+        <style>
+            html,body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+        </style>
+      {% endblock %}
+    </head>
+    <body><center>
+     {% block content %}{% endblock %}
+    </center>
+    </body>
+</html>
