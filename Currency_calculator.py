@@ -13,7 +13,7 @@ def get_data():
     return response.json()[0]['rates']
 
 
-@app.route("/kalkulator_walut2/", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def currency_calculator():
     data = get_data()
 
@@ -48,4 +48,3 @@ def currency_calculator():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    currency_calculator()

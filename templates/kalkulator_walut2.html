@@ -1,16 +1,15 @@
 {% extends "parent.html" %}
 {% block content %}
 
-<form method = "POST" action="/kalkulator_walut2/">
+<form method = "POST" action="/">
   <label for="currency_value"><h1>Wybierz walutę:</h1></label><br>
   <select name=currency_value method="GET" action="/">
     {% for currency in codes %}
     <option value= "{{currency}}" SELECTED>{{ currency }}</option>"
     {% endfor %}
   </select>
-  <br><br>
+  <br><br><br>
 
-<br>
 <label>Ile chcesz kupić:</label><br><br>
 <input type="number" id="amount" name="amount">
 <button type="submit">Przelicz</button>
