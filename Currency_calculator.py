@@ -5,6 +5,10 @@ import requests
 import csv
 import pickle
 import time
+import logging
+
+logging.basicConfig(level = logging.DEBUG, format="%(levelname)s %(asctime)s - %(message)s", filemode = "w", filename = 'kalkulator_walut_9.2.log',)
+logger = logging.getLogger()
 
 
 app = Flask(__name__)
@@ -13,10 +17,12 @@ def get_data():
     try:
         with open('datadump.pickle', 'rb') as cache:
             timestamp, data = pickle.load(cache)
-            if timestamp < time.time() - 5:
+            if timestamp < time.time() - 24*60*60:
                 raise ValueError("Stale cache")
+            logging.info("File got found")
             return data
     except (FileNotFoundError, ValueError) as error:
+        logging.error("File not found")
         print(error)
         response = requests.get("http://api.nbp.pl/api/exchangerates/tables/C?format=json")
         data = response.json()[0]['rates']
@@ -51,13 +57,23 @@ def currency_calculator():
 
         for item in data:
             if item['currency'] == currency:
-                bid_rate = round(float(item['bid']),2)
+                bid_rate = float(item['bid'])
                 break
 
-        message = f" {amount * bid_rate} PLN"
+        message = f" {round(amount * (bid_rate),2)} PLN"
 
     return render_template("kalkulator_walut2.html", codes=codes, message=message)
 
 
+@app.errorhandler(404)
+def not_found(error):
+    logging.error("Wrong page")
+    return render_template('404.html')
+
+@app.errorhandler(500)
+def internal_error(error):
+    logging.error("Send empty form")
+    return render_template('500.html')
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
