@@ -11,7 +11,9 @@ logging.basicConfig(level = logging.DEBUG, format="%(levelname)s %(asctime)s - %
 logger = logging.getLogger()
 
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('marta_config.cfg', silent=True)
+
 
 def get_data():
     try:
@@ -76,4 +78,4 @@ def internal_error(error):
     return render_template('500.html')
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
