@@ -44,7 +44,6 @@ def currency_calculator():
         for item in data:
             csv_writer.writerow(item)
 
-    
     codes = []
     for item in data:
         codes.append(item['currency'])
@@ -55,6 +54,7 @@ def currency_calculator():
         bid_rate =""
         data_form = request.form
         amount = float(data_form.get('amount'))
+
         currency = data_form.get('currency_value')
 
         for item in data:
@@ -65,8 +65,19 @@ def currency_calculator():
         message = f" {round(amount * (bid_rate),2)} PLN"
 
     return render_template("kalkulator_walut2.html", codes=codes, message=message)
+"""
+@app.route("/download", methods=["GET"])
+def download():
+    data = get_data()
 
-
+    with open('datadump.csv', 'w', newline='', encoding='utf8') as csvfile:
+        fieldnames = ['currency', 'code', 'bid', 'ask']
+        csv_writer = csv.DictWriter(csvfile, delimiter=';', fieldnames=fieldnames)
+        csv_writer.writeheader()
+        for item in data:
+            csv_writer.writerow(item)
+    return render_template('download.html')
+"""
 @app.errorhandler(404)
 def not_found(error):
     logging.error("Wrong page")
