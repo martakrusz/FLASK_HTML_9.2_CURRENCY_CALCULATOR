@@ -53,7 +53,10 @@ def currency_calculator():
     if request.method == "POST":
         bid_rate =""
         data_form = request.form
-        amount = float(data_form.get('amount'))
+        try:
+            amount = float(data_form.get('amount'))
+        except ValueError as error:
+            return render_template("kalkulator_walut2.html", codes=codes, message=str(error))
 
         currency = data_form.get('currency_value')
 
