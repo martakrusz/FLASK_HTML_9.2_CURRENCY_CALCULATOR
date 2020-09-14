@@ -1,11 +1,15 @@
-from flask import render_template
-from flask import flash, Flask
+from flask import (
+    render_template,
+    Response,
+)
+from flask import Flask
 from flask import request, redirect, url_for
 import requests
 import csv
 import pickle
 import time
 import logging
+from io import StringIO
 
 logging.basicConfig(level = logging.DEBUG, format="%(levelname)s %(asctime)s - %(message)s", filemode = "w", filename = 'kalkulator_walut_9.2.log',)
 logger = logging.getLogger()
@@ -37,13 +41,6 @@ def get_data():
 def currency_calculator():
     data = get_data()
 
-    with open('datadump.csv', 'w', newline='', encoding='utf8') as csvfile:
-        fieldnames = ['currency', 'code', 'bid', 'ask']
-        csv_writer = csv.DictWriter(csvfile, delimiter=';', fieldnames=fieldnames)
-        csv_writer.writeheader()
-        for item in data:
-            csv_writer.writerow(item)
-
     codes = []
     for item in data:
         codes.append(item['currency'])
@@ -68,19 +65,19 @@ def currency_calculator():
         message = f" {round(amount * (bid_rate),2)} PLN"
 
     return render_template("kalkulator_walut2.html", codes=codes, message=message)
-"""
-@app.route("/download", methods=["GET"])
+
+@app.route("/notowania.csv", methods=["GET"])
 def download():
     data = get_data()
 
-    with open('datadump.csv', 'w', newline='', encoding='utf8') as csvfile:
-        fieldnames = ['currency', 'code', 'bid', 'ask']
-        csv_writer = csv.DictWriter(csvfile, delimiter=';', fieldnames=fieldnames)
-        csv_writer.writeheader()
-        for item in data:
-            csv_writer.writerow(item)
-    return render_template('download.html')
-"""
+    csvfile = StringIO()
+    fieldnames = ['currency', 'code', 'bid', 'ask']
+    csv_writer = csv.DictWriter(csvfile, delimiter=';', fieldnames=fieldnames)
+    csv_writer.writeheader()
+    for item in data:
+        csv_writer.writerow(item)
+    return Response(csvfile.getvalue(), mimetype='text/csv')
+
 @app.errorhandler(404)
 def not_found(error):
     logging.error("Wrong page")
